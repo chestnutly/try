@@ -40,7 +40,7 @@ class BinanceAPI(object):
         path = "%s/ticker/price" % self.BASE_URL_V3
         params = {"symbol":market}
         res =  self._get_no_sign(path,params)
-        while res == 443 : # 网络问题并且20次都访问都是443则报错停止运行
+        while res == 443 : 
             rotate_count += 1
             time.sleep(20)
             self.get_ticker_price(market,rotate_count)
@@ -64,7 +64,7 @@ class BinanceAPI(object):
         #    params = {"symbol": market,"limit":limit, "interval":interval, "startTime":startTime, "endTime":endTime}
         #print("params",params)
         res =  self._get_no_sign(path, params)
-        while res == 443 and rotate_count<4: # 网络问题并且20次都访问都是443则报错停止运行
+        while res == 443 and rotate_count<4: 
             rotate_count += 1
             time.sleep(600)
             self.get_klines(market, interval, limit,rotate_count)
@@ -98,14 +98,14 @@ class BinanceAPI(object):
         return round(float(res['priceChangePercent']),1)
     
     def get_positionInfo(self, symbol):
-        '''当前持仓交易对信息'''
+        
         path = "%s/positionRisk" % self.BASE_URL
         params = {"symbol":symbol}
         time.sleep(1)
         return self._get(path, params)
 
     def get_future_positionInfo(self, symbol):
-        '''当前期货持仓交易对信息'''
+        
         path = "%s/fapi/v2/positionRisk" % self.FUTURE_URL
         params = {"symbol":symbol}
         res = self._get(path, params)
@@ -129,19 +129,19 @@ class BinanceAPI(object):
         }
         requests.post(api_url, json.dumps(json_text), headers=headers,verify=False).content
     def get_cointype(self):
-        '''读取json文件'''
+        
         tmp_json = {}
         with open(data_path, 'r') as f:
             tmp_json = json.load(f)
             f.close()
         return tmp_json["config"]["cointype"]
-    ### ----私有函数---- ###
+    
     def _order(self, market, quantity, side, price=None):
         '''
-        :param market:币种类型。如：BTCUSDT、ETHUSDT
-        :param quantity: 购买量
-        :param side: 订单方向，买还是卖
-        :param price: 价格
+        :param market:BTCUSDT、ETHUSDT
+        :param quantity: 
+        :param side: 
+        :param price: 
         :return:
         '''
         params = {}
@@ -170,7 +170,7 @@ class BinanceAPI(object):
             res=re.json()
         if isinstance(res,dict):
             if 'code' in res:
-                error_info = "报警：做多网格,请求异常.错误原因{info}".format(info=str(res))
+                error_info = "{info}".format(info=str(res))
                 self.dingding_warn(error_info)
         return res
 
@@ -185,19 +185,7 @@ class BinanceAPI(object):
             res=re.json()
         #requests.session.close()
         return res
-        """
-        try:
-            res = requests.get(url, timeout=10, verify=True).json()
-            if isinstance(res,dict):
-                if 'code' in res:
-                    error_info = "报警：做多网格,请求异常.错误原因{info}".format( info=str(res))
-                    self.dingding_warn(error_info)
-                    print(error_info)
-            return res
-        except Exception as e:
-            if str(e).find("443") != -1: # 网络错误不用报错
-                return 443
-        """
+
     def _sign(self, params={}):
         data = params.copy()
 
@@ -219,7 +207,7 @@ class BinanceAPI(object):
 
         if isinstance(res,dict):
             if 'code' in res:
-                error_info = "报警：做多网格,请求异常.错误原因{info}".format( info=str(res))
+                error_info = "{info}".format( info=str(res))
                 self.dingding_warn(error_info)
 
         return res
